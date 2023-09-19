@@ -1,0 +1,22 @@
+module.exports = {
+  parser: '@typescript-eslint/parser',
+  plugins: ['@typescript-eslint/eslint-plugin'],
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
+  root: true,
+  ignorePatterns: ['.eslintrc.js'],
+  rules: {
+    '@typescript-eslint/no-namespace': 'off',
+    '@typescript-eslint/no-empty-function': 'off',
+    '@typescript-eslint/ban-ts-comment': 'off',
+    '@typescript-eslint/no-inferrable-types': 'off',
+    'no-irregular-whitespace': 'off',
+    'no-extra-boolean-cast': 'off',
+    'no-inner-declarations': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off',
+    '@typescript-eslint/no-extra-semi': 'off',
+    'no-extra-semi': 'off',
+    '@typescript-eslint/no-empty-interface': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
+  },
+};

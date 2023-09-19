@@ -1,0 +1,12 @@
+## Compiled JavaScript files
+**/*.js
+**/*.js.map
+!.eslintrc.js
+
+# Typescript v1 declaration files
+typings/
+
+node_modules/
+dist/
+
+.npmrc
