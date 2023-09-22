@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
 import commander from 'commander';
+import ts from 'typescript';
+import path from 'path';
 import pkg from '../../package.json';
 import { TypeormMarkdownApplication } from '../TypeormMarkdownApplication';
 
@@ -13,9 +15,18 @@ type ProgramOptions = {
 async function main(options: ProgramOptions) {
   console.log(options);
 
+  const tsconfigStr = ts.findConfigFile(
+    path.join(process.cwd(), options.project),
+    ts.sys.fileExists,
+    // 'tsconfig.json',
+  );
+
   await TypeormMarkdownApplication.generate({
     input: options.input,
     output: options.output,
+    compileOptions: tsconfigStr
+      ? ts.readConfigFile(tsconfigStr, ts.sys.readFile).config?.compileOptions
+      : undefined,
   });
 }
 
