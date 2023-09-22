@@ -1,16 +1,35 @@
 #!/usr/bin/env node
 
 import commander from 'commander';
+import pkg from '../../package.json';
+import { TypeormMarkdownApplication } from '../TypeormMarkdownApplication';
 
-type ProgramOptions = {};
+type ProgramOptions = {
+  project: string;
+  input: string;
+  output: string;
+};
 
 async function main(options: ProgramOptions) {
   console.log(options);
+
+  await TypeormMarkdownApplication.generate({
+    input: options.input,
+    output: options.output,
+  });
 }
 
 const program = new commander.Command();
 
-program.option('-d, --debug', 'output extra debugging');
+program
+  .version(pkg.version, '-v, --version', 'output the current version')
+  .requiredOption('-i, --input <input_regex>', '')
+  .requiredOption('-o, --output <dir_path>', '')
+  .option(
+    '--project <project_path>',
+    'Use --project to explicitly specify the path to a tsconfig.json',
+    'tsconfig.json',
+  );
 
 program.parse(process.argv);
 

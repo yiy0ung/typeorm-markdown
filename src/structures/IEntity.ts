@@ -1,6 +1,8 @@
 export interface IEntity {
   name: string;
 
+  file: string;
+
   columns: IEntity.IColumn[];
 }
 
