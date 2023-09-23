@@ -6,10 +6,13 @@ import path from 'path';
 import pkg from '../../package.json';
 import { TypeormMarkdownApplication } from '../TypeormMarkdownApplication';
 
+const DEFAULT_TITLE: string = 'ERD';
+
 type ProgramOptions = {
   project: string;
   input: string;
   output: string;
+  title: string;
 };
 
 async function main(options: ProgramOptions) {
@@ -22,6 +25,7 @@ async function main(options: ProgramOptions) {
   );
 
   await TypeormMarkdownApplication.generate({
+    title: options.title,
     input: options.input,
     output: options.output,
     compileOptions: tsconfigStr
@@ -36,6 +40,7 @@ program
   .version(pkg.version, '-v, --version', 'output the current version')
   .requiredOption('-i, --input <input_regex>', '')
   .requiredOption('-o, --output <dir_path>', '')
+  .option('-t, --title <title>', DEFAULT_TITLE)
   .option(
     '--project <project_path>',
     'Use --project to explicitly specify the path to a tsconfig.json',
