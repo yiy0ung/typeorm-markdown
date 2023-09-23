@@ -23,13 +23,13 @@ export function groupBy<T>(
   arr: T[],
   selector: (item: T) => string | number | null = (item: any) => item.id,
 ) {
-  const map: Record<string, T[]> = {};
+  const map: Record<string, T[] | undefined> = {};
 
   arr.forEach(data => {
     const key = selector(data);
     if (key !== null) {
       if (map[key]) {
-        map[key].push(data);
+        map[key]!.push(data);
       } else {
         map[key] = [data];
       }
