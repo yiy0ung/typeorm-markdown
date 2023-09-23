@@ -4,40 +4,35 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { PostChat } from './post-chat.entity';
-import { Board } from './board.entity';
+import { Post } from './post.entity';
 import { User } from './user.entity';
 
 /**
- * 게시판 게시글.
+ * 게시판 게시글 댓글.
  *
  * @namespace board
  */
 @Entity()
-export class Post {
+export class PostChat {
   @PrimaryColumn('uuid')
   id!: string;
 
-  @ManyToOne(() => User, user => user.posts)
+  @ManyToOne(() => User, user => user.postChats)
   @JoinColumn({ name: 'authorId' })
   author!: User;
 
   @Column()
   authorId!: User['id'];
 
-  @ManyToOne(() => Board, board => board.posts)
-  @JoinColumn({ name: 'boardId' })
-  board!: Board;
+  @ManyToOne(() => Post, post => post.chats)
+  @JoinColumn({ name: 'postId' })
+  post!: Post;
 
   @Column()
-  boardId!: Board['id'];
-
-  @Column({ nullable: true })
-  title!: string | null;
+  postId!: Post['id'];
 
   @Column()
   body!: string;
@@ -47,7 +42,4 @@ export class Post {
 
   @UpdateDateColumn()
   updatedAt!: Date;
-
-  @OneToMany(() => PostChat, chat => chat.post)
-  chats!: PostChat[];
 }
