@@ -1,30 +1,137 @@
 import path from 'path';
-import { IEntity } from 'structures/IEntity';
+import { JoinColumnMetadataArgs } from 'typeorm/metadata-args/JoinColumnMetadataArgs';
 import { MetadataArgsStorage } from 'typeorm/metadata-args/MetadataArgsStorage';
+import { RelationMetadataArgs } from 'typeorm/metadata-args/RelationMetadataArgs';
+import { RelationTypeInFunction } from 'typeorm/metadata/types/RelationTypeInFunction';
+import { ITable } from '@src/structures/ITable';
+import { normalizeArray } from '@src/utils/method.utils';
+import { snakeCase } from '@src/utils/string.utils';
 
 export namespace MetadataAnalyzer {
-  export async function analyze(files: string[]): Promise<IEntity[]> {
+  export async function analyze(files: string[]): Promise<ITable[]> {
     // Load entity files
     for (const file of files) {
       await import(path.join(process.cwd(), file));
     }
 
+    // Explore metadata
     const metadataArgsStorage: MetadataArgsStorage = (global as any)?.typeormMetadataArgsStorage;
-    console.log(metadataArgsStorage);
-    const entities = analyzeEntity(metadataArgsStorage);
-    console.log(entities);
+    const tables: ITable[] = analyzeTables(metadataArgsStorage);
 
-    return entities;
+    // console.log(metadataArgsStorage);
+    // console.log(JSON.stringify(tables, null, 2));
+    return tables;
   }
 
-  function analyzeEntity(metadataArgsStorage: MetadataArgsStorage): IEntity[] {
-    const entities: IEntity[] = [];
-
-    metadataArgsStorage.tables;
-    metadataArgsStorage.columns;
-
-    return entities;
+  function getEntityFromTarget(target: string | Function): Function | undefined {
+    return target instanceof Function ? target : undefined;
   }
 
-  async function analyzeColumn(entity: IEntity) {}
+  function analyzeTables(metadataArgsStorage: MetadataArgsStorage): ITable[] {
+    const { tables: tableMetadataArgs } = metadataArgsStorage;
+    const tables: ITable[] = [];
+
+    // Explore tables
+    tableMetadataArgs.forEach(tableMetadata => {
+      const entity: Function | undefined = getEntityFromTarget(tableMetadata.target);
+      if (!entity) return;
+
+      tables.push({
+        name: tableMetadata.name ?? snakeCase(entity.name),
+        entity,
+        database: tableMetadata.database ?? null,
+        description: '',
+        columns: [],
+        relations: [],
+        namespaces: [],
+      });
+    });
+
+    // Mapping table columns
+    analyzeColumns(metadataArgsStorage, tables);
+
+    return tables;
+  }
+
+  function analyzeColumns(metadataArgsStorage: MetadataArgsStorage, tables: ITable[]): void {
+    const {
+      columns: columnMetadataArgs,
+      joinColumns: joinColumnMetadataArgs,
+      relations: relationMetadataArgs,
+    } = metadataArgsStorage;
+
+    // Find entity and Filter
+    const joinColumns = joinColumnMetadataArgs.reduce<
+      { entity: Function; metadata: JoinColumnMetadataArgs }[]
+    >((args, metadata) => {
+      const entity = getEntityFromTarget(metadata.target);
+      if (entity) args.push({ entity, metadata });
+      return args;
+    }, []);
+    const relations = relationMetadataArgs.reduce<
+      { entity: Function; metadata: RelationMetadataArgs }[]
+    >((args, metadata) => {
+      const entity = getEntityFromTarget(metadata.target);
+      if (entity) args.push({ entity, metadata });
+      return args;
+    }, []);
+
+    // Normalize
+    const tableMap = normalizeArray(tables, table => table.entity.name);
+    const getJoinColumn = (() => {
+      const joinColumnMap = normalizeArray(
+        joinColumns,
+        joinColumn => `${joinColumn.entity.name}-${joinColumn.metadata.name}`,
+      );
+      return (entityName: string, columnName: string) =>
+        joinColumnMap[`${entityName}-${columnName}`];
+    })();
+    const getRelation = (() => {
+      const relationMap = normalizeArray(
+        relations,
+        relation => `${relation.entity.name}-${relation.metadata.propertyName}`,
+      );
+      return (entityName: string, propertyName: string) =>
+        relationMap[`${entityName}-${propertyName}`];
+    })();
+
+    // Explore table columns
+    columnMetadataArgs.forEach(columnMetadata => {
+      const entity: Function | undefined = getEntityFromTarget(columnMetadata.target);
+      if (!entity) return;
+
+      const table = tableMap[entity.name];
+      if (!table) return;
+
+      const joinColumn = getJoinColumn(entity.name, columnMetadata.propertyName);
+      const relation = joinColumn
+        ? getRelation(entity.name, joinColumn.metadata.propertyName)
+        : undefined;
+
+      table.columns.push({
+        name: columnMetadata.propertyName,
+        type: columnMetadata.options.type,
+        primaryKey: columnMetadata.options.primary ?? false,
+        foreignKey: !!(joinColumn && relation),
+        nullable: columnMetadata.options.nullable ?? false,
+        description: '',
+      });
+
+      const relationEntityName =
+        relation && isTypeFunction(relation.metadata.type)
+          ? relation.metadata.type().name
+          : undefined;
+      if (relation && relationEntityName) {
+        table.relations.push({
+          relationEntityName: relationEntityName,
+          relationType: relation.metadata.relationType,
+          description: '',
+        });
+      }
+    });
+  }
+
+  export function isTypeFunction(r: RelationTypeInFunction): r is (types?: any) => Function {
+    return typeof r === 'function';
+  }
 }
