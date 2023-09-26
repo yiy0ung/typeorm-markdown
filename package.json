@@ -8,7 +8,7 @@
   "scripts": {
     "prepare": "ts-patch install -s",
     "build": "rimraf dist && tspc",
-    "test": "node ./dist/src/commands/typeorm-markdown.js --title \"Community\" -i \"test/**/*.entity.ts\" -o \"test/\""
+    "test": "node ./dist/src/commands/typeorm-markdown.js --title \"Community\" -i \"test/**/*.entity.ts\" -o \"test/\" --project \"test/tsconfig.json\""
   },
   "bin": {
     "typeorm-markdown": "./dist/src/commands/typeorm-markdown.js"

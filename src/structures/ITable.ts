@@ -4,6 +4,8 @@ import { RelationType } from 'typeorm/metadata/types/RelationTypes';
 export interface ITable {
   name: string;
 
+  file: string;
+
   entity: Function;
 
   database: string | null;

@@ -16,31 +16,33 @@ type ProgramOptions = {
 };
 
 async function main(options: ProgramOptions) {
-  console.log(options);
+  const tsconfigPath: string = path.join(process.cwd(), options.project ?? 'tsconfig.json');
+  const searchPath: string = path.dirname(tsconfigPath);
+  const configName: string = path.basename(tsconfigPath);
 
-  const tsconfigStr = ts.findConfigFile(
-    path.join(process.cwd(), options.project),
+  const tsconfigStr: string | undefined = ts.findConfigFile(
+    searchPath,
     ts.sys.fileExists,
-    // 'tsconfig.json',
+    configName,
   );
 
   await TypeormMarkdownApplication.generate({
     title: options.title,
     input: options.input,
     output: options.output,
-    compileOptions: tsconfigStr
-      ? ts.readConfigFile(tsconfigStr, ts.sys.readFile).config?.compileOptions
+    compilerOptions: tsconfigStr
+      ? ts.readConfigFile(tsconfigStr, ts.sys.readFile).config?.compilerOptions
       : undefined,
   });
 }
 
-const program = new commander.Command();
+const program: commander.Command = new commander.Command();
 
 program
   .version(pkg.version, '-v, --version', 'output the current version')
   .requiredOption('-i, --input <input_regex>', '')
   .requiredOption('-o, --output <dir_path>', '')
-  .option('-t, --title <title>', DEFAULT_TITLE)
+  .option('-t, --title <title>', 'title for a generated erd', DEFAULT_TITLE)
   .option(
     '--project <project_path>',
     'Use --project to explicitly specify the path to a tsconfig.json',

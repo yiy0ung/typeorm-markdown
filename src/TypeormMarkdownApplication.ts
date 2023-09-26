@@ -3,11 +3,24 @@ import * as tsNode from 'ts-node';
 import ts from 'typescript';
 import { MetadataAnalyzer } from './analyzers/metadata.analyzer';
 import { ITable } from './structures/ITable';
+import { EntityAnalyzer } from './analyzers/entity.analyzer';
 
-function registerTsNode(compileOptions?: ts.CompilerOptions) {
+function registerTsNode(config: TypeormMarkdownApplication.IConfig) {
+  if (!config.compilerOptions) {
+    config.compilerOptions = {
+      noEmit: true,
+      esModuleInterop: true,
+      experimentalDecorators: true,
+      emitDecoratorMetadata: true,
+      target: 'ES5' as any as ts.ScriptTarget,
+      module: 'CommonJS' as any as ts.ModuleKind,
+    };
+  }
+
   tsNode.register({
     emit: false,
     compiler: 'typescript',
+    compilerOptions: config.compilerOptions,
     require: ['tsconfig-paths/register'],
   });
 }
@@ -17,18 +30,24 @@ export namespace TypeormMarkdownApplication {
     title: string;
     input: string;
     output: string;
-    compileOptions?: ts.CompilerOptions;
+    compilerOptions?: ts.CompilerOptions;
   }
 
   export async function generate(config: IConfig) {
-    registerTsNode(config.compileOptions);
+    registerTsNode(config);
 
     const files: string[] = glob.sync(config.input, { nodir: true });
-    console.log(files);
 
     const tables: ITable[] = await MetadataAnalyzer.analyze(files);
 
-    // const program = ts.createProgram({ options: {}, rootNames: [''] });
-    // const checker = program.getTypeChecker();
+    const program = ts.createProgram({
+      rootNames: tables.map(table => table.file),
+      options: config.compilerOptions!,
+    });
+    const checker = program.getTypeChecker();
+
+    tables.forEach(table => {
+      EntityAnalyzer.analyze(program, checker, table);
+    });
   }
 }

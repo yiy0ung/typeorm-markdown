@@ -5,5 +5,6 @@
   "semi": true,
   "quoteProps": "consistent",
   "arrowParens": "avoid",
-  "endOfLine": "auto"
+  "endOfLine": "auto",
+  "tabWidth": 2
 }

@@ -7,19 +7,36 @@ import { ITable } from '@src/structures/ITable';
 import { normalizeArray } from '@src/utils/method.utils';
 import { snakeCase } from '@src/utils/string.utils';
 
+interface IModule {
+  [key: string]: any;
+}
+
+interface IModuleFile {
+  key: string;
+  file: string;
+  module: any;
+}
+
 export namespace MetadataAnalyzer {
   export async function analyze(files: string[]): Promise<ITable[]> {
-    // Load entity files
+    // Load module files
+    const moduleFiles: IModuleFile[] = [];
     for (const file of files) {
-      await import(path.join(process.cwd(), file));
+      const filePath: string = path.join(process.cwd(), file);
+      const modules: IModule = await import(filePath);
+      Object.entries(modules).map(([key, module]) => {
+        moduleFiles.push({
+          key: key,
+          file: filePath,
+          module,
+        });
+      });
     }
 
     // Explore metadata
     const metadataArgsStorage: MetadataArgsStorage = (global as any)?.typeormMetadataArgsStorage;
-    const tables: ITable[] = analyzeTables(metadataArgsStorage);
+    const tables: ITable[] = analyzeTables(moduleFiles, metadataArgsStorage);
 
-    // console.log(metadataArgsStorage);
-    // console.log(JSON.stringify(tables, null, 2));
     return tables;
   }
 
@@ -27,7 +44,10 @@ export namespace MetadataAnalyzer {
     return target instanceof Function ? target : undefined;
   }
 
-  function analyzeTables(metadataArgsStorage: MetadataArgsStorage): ITable[] {
+  function analyzeTables(
+    moduleFiles: IModuleFile[],
+    metadataArgsStorage: MetadataArgsStorage,
+  ): ITable[] {
     const { tables: tableMetadataArgs } = metadataArgsStorage;
     const tables: ITable[] = [];
 
@@ -35,10 +55,13 @@ export namespace MetadataAnalyzer {
     tableMetadataArgs.forEach(tableMetadata => {
       const entity: Function | undefined = getEntityFromTarget(tableMetadata.target);
       if (!entity) return;
+      const moduleFile = moduleFiles.find(moduleFile => moduleFile.module === entity);
+      if (!moduleFile) return;
 
       tables.push({
         name: tableMetadata.name ?? snakeCase(entity.name),
         entity,
+        file: moduleFile.file,
         database: tableMetadata.database ?? null,
         description: '',
         columns: [],
