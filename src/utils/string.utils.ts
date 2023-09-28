@@ -13,7 +13,6 @@ export function camelCase(str: string, firstCapital: boolean = false): string {
 
 /**
  * Converts string into snake_case.
- *
  */
 export function snakeCase(str: string): string {
   return (
@@ -23,5 +22,49 @@ export function snakeCase(str: string): string {
       // aC -> a_c
       .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
       .toLowerCase()
+  );
+}
+
+export function findBetweenString(str: string, start: string, end: string): string[] {
+  const arrStr = str.split(start);
+  arrStr.splice(0, 1);
+
+  return arrStr.map(ele => ele.split(end)[0]);
+}
+
+export function parseCommentLine(commentText: string): string[] | undefined {
+  return findBetweenString(commentText, '/**', '*/')[0]
+    ?.trim()
+    .split('\n')
+    .map(comment => comment.trim().replace(/^\*/, '').trim());
+}
+
+export type CommentAndJsDoc = {
+  comment: string;
+  jsdoc: { tag: string; name: string }[];
+};
+
+export function parseCommentAndJSDoc(commentText: string): CommentAndJsDoc | undefined {
+  const commentLines = parseCommentLine(commentText);
+  if (!commentLines) return;
+
+  return commentLines.reduce<{ comment: string; jsdoc: { tag: string; name: string }[] }>(
+    (result, commentLine) => {
+      if (commentLine.startsWith('@')) {
+        commentLine = commentLine.slice(1);
+
+        const [tag, ...names] = commentLine.split(' ');
+        result.jsdoc.push({
+          tag: tag,
+          name: names.join(' '),
+        });
+      } else {
+        if (result.comment.length > 0) commentLine = '\n' + commentLine;
+        result.comment += commentLine;
+      }
+
+      return result;
+    },
+    { comment: '', jsdoc: [] },
   );
 }

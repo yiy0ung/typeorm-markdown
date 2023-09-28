@@ -18,24 +18,31 @@ import { BoardMember } from './board-member.entity';
  */
 @Entity()
 export class User {
+  /** Primary Key */
   @PrimaryColumn('uuid')
   id!: string;
 
+  /** 계정 ID */
   @Column()
   account!: string;
 
+  /** 비밀번호 */
   @Column({ select: false })
   password!: string;
 
+  /** 이름 */
   @Column()
   displayName!: string;
 
+  /** 생성일 */
   @CreateDateColumn()
   createdAt!: Date;
 
+  /** 수정일 */
   @UpdateDateColumn()
   updatedAt!: Date;
 
+  /** 탈퇴일 */
   @DeleteDateColumn()
   deletedAt!: Date | null;
 

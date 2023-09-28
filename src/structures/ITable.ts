@@ -16,7 +16,7 @@ export interface ITable {
 
   relations: ITable.IRelation[];
 
-  namespaces: string[];
+  hidden: boolean;
 }
 
 export namespace ITable {

@@ -2,9 +2,10 @@
   "name": "typeorm-markdown",
   "version": "1.0.0",
   "license": "MIT",
-  "author": "",
+  "author": "Jinyoung Lee",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "scripts": {
     "prepare": "ts-patch install -s",
     "build": "rimraf dist && tspc",
@@ -20,7 +21,8 @@
     "commander": "^11.0.0",
     "glob": "^10.3.5",
     "ts-node": "^10.9.1",
-    "tsconfig-paths": "^4.2.0"
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.2.2"
   },
   "devDependencies": {
     "@types/node": "^20.6.2",
@@ -30,7 +32,23 @@
     "prettier": "^3.0.3",
     "rimraf": "^5.0.1",
     "ts-patch": "^3.0.2",
-    "typescript": "^5.2.2",
     "typescript-transform-paths": "^3.4.6"
-  }
+  },
+  "homepage": "https://github.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com"
+  },
+  "bugs": {
+    "url": "https://github.com"
+  },
+  "keywords": [
+    "typeorm",
+    "markdown",
+    "erd",
+    "mermaid",
+    "document",
+    "description",
+    "generator"
+  ]
 }

@@ -4,6 +4,8 @@ import ts from 'typescript';
 import { MetadataAnalyzer } from './analyzers/metadata.analyzer';
 import { ITable } from './structures/ITable';
 import { EntityAnalyzer } from './analyzers/entity.analyzer';
+import { IErdCollection } from './structures/IErdCollection';
+import { ErdMarkdownWriter } from './writers/erd-markdown.writer';
 
 function registerTsNode(config: TypeormMarkdownApplication.IConfig) {
   if (!config.compilerOptions) {
@@ -44,10 +46,13 @@ export namespace TypeormMarkdownApplication {
       rootNames: tables.map(table => table.file),
       options: config.compilerOptions!,
     });
-    const checker = program.getTypeChecker();
+    program.getTypeChecker();
 
+    const erdCollection: IErdCollection = {};
     tables.forEach(table => {
-      EntityAnalyzer.analyze(program, checker, table);
+      EntityAnalyzer.analyze(erdCollection, program, table);
     });
+
+    ErdMarkdownWriter.write(erdCollection, config);
   }
 }

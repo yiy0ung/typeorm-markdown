@@ -66,7 +66,7 @@ export namespace MetadataAnalyzer {
         description: '',
         columns: [],
         relations: [],
-        namespaces: [],
+        hidden: false,
       });
     });
 
