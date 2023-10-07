@@ -4,17 +4,19 @@ import {
   DeleteDateColumn,
   Entity,
   OneToMany,
+  OneToOne,
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Post } from './post.entity';
-import { PostChat } from './post-chat.entity';
-import { BoardMember } from './board-member.entity';
+import { BlogPost } from './blogPost.entity';
+import { BlogPostChat } from './blogPostChat.entity';
+import { Blog } from './blog.entity';
 
 /**
  * 사용자.
  *
  * @namespace User
+ * @erd Blog
  */
 @Entity()
 export class User {
@@ -50,12 +52,12 @@ export class User {
   @DeleteDateColumn()
   deletedAt!: Date | null;
 
-  @OneToMany(() => BoardMember, boardManager => boardManager.user)
-  boardMembers!: BoardMember[];
+  @OneToOne(() => Blog, blog => blog.owner)
+  myBlog!: Blog[];
 
-  @OneToMany(() => Post, post => post.author)
-  posts!: Post[];
+  @OneToMany(() => BlogPost, post => post.author)
+  posts!: BlogPost[];
 
-  @OneToMany(() => PostChat, postChat => postChat.author)
-  postChats!: PostChat[];
+  @OneToMany(() => BlogPostChat, postChat => postChat.author)
+  postChats!: BlogPostChat[];
 }

@@ -1,22 +1,24 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Post } from './post.entity';
+import { BlogPost } from './blogPost.entity';
 import { User } from './user.entity';
 
 /**
- * 게시판 게시글 댓글.
+ * 블로그 게시글 댓글.
  *
- * @namespace Board
+ * @namespace Blog
  */
 @Entity()
-export class PostChat {
+export class BlogPostChat {
+  /** Primary Key  */
   @PrimaryColumn('uuid')
   id!: string;
 
@@ -24,22 +26,31 @@ export class PostChat {
   @JoinColumn({ name: 'authorId' })
   author!: User;
 
+  /** 댓글을 작성한 User ID */
   @Column()
   authorId!: User['id'];
 
-  @ManyToOne(() => Post, post => post.chats)
+  @ManyToOne(() => BlogPost, post => post.chats)
   @JoinColumn({ name: 'postId' })
-  post!: Post;
+  post!: BlogPost;
 
+  /** 댓글이 속한 BlogPost ID */
   @Column()
-  postId!: Post['id'];
+  postId!: BlogPost['id'];
 
+  /** 내용 */
   @Column()
   body!: string;
 
+  /** 작성일 */
   @CreateDateColumn()
   createdAt!: Date;
 
+  /** 수정일 */
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  /** 삭제일 */
+  @DeleteDateColumn()
+  deletedAt!: Date | null;
 }
