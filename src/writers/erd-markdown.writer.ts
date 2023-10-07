@@ -113,10 +113,11 @@ export namespace ErdMarkdownWriter {
         const primaryColumn = relatedTable.columns.find(column => column.primaryKey);
         if (primaryColumn) {
           descLines.push(
-            `Belonged ${relatedTable.name}'s [${primaryColumn.name}](#${relatedTable.name})`,
+            '',
+            `Belonged ${relatedTable.name}'s [${relatedTable.name}.${primaryColumn.name}](#${relatedTable.name})`,
           );
         } else {
-          descLines.push(`Belonged [${relatedTable.name}](#${relatedTable.name})`);
+          descLines.push('', `Belonged [${relatedTable.name}](#${relatedTable.name})`);
         }
       }
       if (descLines.length === 1 && descLines[0].length > 0) {
