@@ -38,11 +38,11 @@ export namespace MetadataAnalyzer {
     return tables;
   }
 
-  function getEntityName(target: string | Function): string {
+  function getEntityName(target: Function | string): string {
     return target instanceof Function ? target.name : target;
   }
 
-  function getEntityClass(target: string | Function): Function | undefined {
+  function getEntityClass(target: Function | string): Function | undefined {
     return target instanceof Function ? target : undefined;
   }
 
@@ -118,7 +118,10 @@ export namespace MetadataAnalyzer {
 
       const joinColumn = getJoinColumn(entity.name, columnMetadata.propertyName);
       const relation = joinColumn ? getRelation(entity.name, joinColumn.propertyName) : undefined;
-      const relatedTable = relation ? tableMap[getEntityName(relation.target)] : undefined;
+      const relatedTable =
+        relation && isTypeFunction(relation.type)
+          ? tableMap[getEntityName(relation.type())]
+          : undefined;
 
       table.columns.push({
         name: columnMetadata.propertyName,
@@ -141,7 +144,7 @@ export namespace MetadataAnalyzer {
           return 'unknown';
         })(),
         primaryKey: columnMetadata.options.primary ?? false,
-        foreignKey: !!(joinColumn && relation),
+        foreignKey: !!relatedTable,
         foreignKeyTargetTableName: relatedTable?.name ?? null,
         nullable: columnMetadata.options.nullable ?? false,
         description: '',

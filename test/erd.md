@@ -63,11 +63,11 @@ blog_post }|--|| blog : blog
 - `authorId`
   > 댓글을 작성한 User ID
   > 
-  > Belonged blog_post_chat's [blog_post_chat.id](#blog_post_chat)
+  > Belonged user's [user.id](#user)
 - `postId`
   > 댓글이 속한 BlogPost ID
   > 
-  > Belonged blog_post_chat's [blog_post_chat.id](#blog_post_chat)
+  > Belonged blog_post's [blog_post.id](#blog_post)
 - `body`: 내용
 - `createdAt`: 작성일
 - `updatedAt`: 수정일
@@ -81,7 +81,7 @@ blog_post }|--|| blog : blog
 - `blogId`
   > 카테고리가 속한 Blog ID
   > 
-  > Belonged blog_category's [blog_category.id](#blog_category)
+  > Belonged blog's [blog.id](#blog)
 - `name`: 카테고리 명
 - `createdAt`: 생성일
 - `updatedAt`: 수정일
@@ -98,7 +98,7 @@ blog_post }|--|| blog : blog
 - `ownerId`
   > 블로그 관리자 User ID
   > 
-  > Belonged blog's [blog.id](#blog)
+  > Belonged user's [user.id](#user)
 - `name`: 블로그 이름
 
 ### blog_post
@@ -109,11 +109,11 @@ blog_post }|--|| blog : blog
 - `authorId`
   > 게시글 작성자 User ID
   > 
-  > Belonged blog_post's [blog_post.id](#blog_post)
+  > Belonged user's [user.id](#user)
 - `blogId`
   > 게시글이 속한 Blog ID
   > 
-  > Belonged blog_post's [blog_post.id](#blog_post)
+  > Belonged blog's [blog.id](#blog)
 - `title`: 제목
 - `body`: 내용
 - `isHidden`: 숨김 여부
