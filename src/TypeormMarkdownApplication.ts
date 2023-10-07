@@ -40,19 +40,23 @@ export namespace TypeormMarkdownApplication {
 
     const files: string[] = glob.sync(config.input, { nodir: true });
 
+    // Parse ORM reflect metadata
     const tables: ITable[] = await MetadataAnalyzer.analyze(files);
 
+    // Set typescript compiler
     const program = ts.createProgram({
       rootNames: tables.map(table => table.file),
       options: config.compilerOptions!,
     });
     program.getTypeChecker();
 
+    // Parse ORM comment and collect erd
     const erdCollection: IErdCollection = {};
     tables.forEach(table => {
       EntityAnalyzer.analyze(erdCollection, program, table);
     });
 
+    // Write ERD document
     ErdMarkdownWriter.write(erdCollection, config);
   }
 }

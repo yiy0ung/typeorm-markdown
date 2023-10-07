@@ -14,7 +14,7 @@ import { BoardMember } from './board-member.entity';
 /**
  * 사용자.
  *
- * @namespace user
+ * @namespace User
  */
 @Entity()
 export class User {
@@ -42,7 +42,11 @@ export class User {
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  /** 탈퇴일 */
+  /**
+   * 삭제일.
+   *
+   * 삭제일이 있다는 것은 탈퇴를 의미한다.
+   */
   @DeleteDateColumn()
   deletedAt!: Date | null;
 

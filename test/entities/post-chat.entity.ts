@@ -13,7 +13,7 @@ import { User } from './user.entity';
 /**
  * 게시판 게시글 댓글.
  *
- * @namespace board
+ * @namespace Board
  */
 @Entity()
 export class PostChat {

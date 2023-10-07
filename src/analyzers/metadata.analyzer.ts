@@ -133,7 +133,24 @@ export namespace MetadataAnalyzer {
 
       table.columns.push({
         name: columnMetadata.propertyName,
-        type: columnMetadata.options.type,
+        type: (() => {
+          if (typeof columnMetadata.options.type === 'string') {
+            return columnMetadata.options.type;
+          }
+          if (typeof columnMetadata.options.type === 'function') {
+            const primitive = new columnMetadata.options.type();
+            const columnType = typeof primitive.valueOf();
+            return columnType === 'object' ? 'unknown' : columnType;
+          }
+          if (
+            columnMetadata.mode === 'createDate' ||
+            columnMetadata.mode === 'updateDate' ||
+            columnMetadata.mode === 'deleteDate'
+          ) {
+            return 'timestamp';
+          }
+          return 'unknown';
+        })(),
         primaryKey: columnMetadata.options.primary ?? false,
         foreignKey: !!(joinColumn && relation),
         nullable: columnMetadata.options.nullable ?? false,
@@ -146,9 +163,9 @@ export namespace MetadataAnalyzer {
           : undefined;
       if (relation && relationEntityName) {
         table.relations.push({
-          relationEntityName: relationEntityName,
+          relationTableName: tableMap[relationEntityName]?.name ?? relationEntityName,
           relationType: relation.metadata.relationType,
-          description: '',
+          description: relation.metadata.propertyName,
         });
       }
     });

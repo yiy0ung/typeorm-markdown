@@ -15,7 +15,7 @@ import { User } from './user.entity';
 /**
  * 게시판 게시글.
  *
- * @namespace board
+ * @namespace Board
  */
 @Entity()
 export class Post {
@@ -41,6 +41,9 @@ export class Post {
 
   @Column()
   body!: string;
+
+  @Column()
+  hidden!: boolean;
 
   @CreateDateColumn()
   createdAt!: Date;

@@ -5,7 +5,7 @@ import { BoardMember } from './board-member.entity';
 /**
  * 게시판.
  *
- * @namespace board
+ * @namespace Board
  */
 @Entity()
 export class Board {

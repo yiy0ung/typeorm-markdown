@@ -6,8 +6,6 @@ import path from 'path';
 import pkg from '../../package.json';
 import { TypeormMarkdownApplication } from '../TypeormMarkdownApplication';
 
-const DEFAULT_TITLE: string = 'ERD';
-
 type ProgramOptions = {
   project: string;
   input: string;
@@ -36,12 +34,13 @@ async function main(options: ProgramOptions) {
   });
 }
 
-const program: commander.Command = new commander.Command();
+const DEFAULT_TITLE: string = 'ERD';
 
+const program: commander.Command = new commander.Command();
 program
   .version(pkg.version, '-v, --version', 'output the current version')
   .requiredOption('-i, --input <input_regex>', '')
-  .requiredOption('-o, --output <dir_path>', '')
+  .option('-o, --output <dir_path>', '', './')
   .option('-t, --title <title>', 'title for a generated erd', DEFAULT_TITLE)
   .option(
     '--project <project_path>',

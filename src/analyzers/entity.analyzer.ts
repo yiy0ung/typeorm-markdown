@@ -45,7 +45,6 @@ export namespace EntityAnalyzer {
         commentAndJSDoc.jsdoc.forEach(jsdoc => {
           if (!erdCollection[jsdoc.name]) {
             erdCollection[jsdoc.name] = {
-              namespaces: [],
               erds: [],
               descriptions: [],
             };
@@ -53,7 +52,8 @@ export namespace EntityAnalyzer {
 
           const collection = erdCollection[jsdoc.name];
           if (jsdoc.tag === NAMESPACE_TAG) {
-            collection.namespaces.push(table);
+            collection.erds.push(table);
+            collection.descriptions.push(table);
           } else if (jsdoc.tag === ERD_TAG) {
             collection.erds.push(table);
           } else if (jsdoc.tag === DESCRIPTION_TAG) {

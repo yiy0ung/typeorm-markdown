@@ -1,4 +1,3 @@
-import { ColumnType } from 'typeorm';
 import { RelationType } from 'typeorm/metadata/types/RelationTypes';
 
 export interface ITable {
@@ -23,7 +22,7 @@ export namespace ITable {
   export interface IColumn {
     name: string;
 
-    type?: ColumnType;
+    type: string;
 
     primaryKey: boolean;
 
@@ -35,9 +34,9 @@ export namespace ITable {
   }
 
   export interface IRelation {
-    relationEntityName: string;
-
     relationType: RelationType;
+
+    relationTableName: string;
 
     description: string;
   }
