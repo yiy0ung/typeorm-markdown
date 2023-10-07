@@ -3,14 +3,20 @@ import path from 'path';
 import { TypeormMarkdownApplication } from '@src/TypeormMarkdownApplication';
 import { IErdCollection } from '@src/structures/IErdCollection';
 import { ITable } from '@src/structures/ITable';
+import { normalizeArray } from '@src/utils/method.utils';
 
 export namespace ErdMarkdownWriter {
   const FILE_NAME: string = 'erd.md';
 
-  export function write(erdCollection: IErdCollection, config: TypeormMarkdownApplication.IConfig) {
+  export function write(
+    erdCollection: IErdCollection,
+    tables: ITable[],
+    config: TypeormMarkdownApplication.IConfig,
+  ) {
     let erdMarkdown: string = '';
+    const tableMap = normalizeArray(tables, table => table.name);
 
-    // Title
+    // TITLE
     erdMarkdown += `# ${config.title}\n\n`;
 
     const groupNames = Object.keys(erdCollection).sort((a, b) => {
@@ -19,13 +25,13 @@ export namespace ErdMarkdownWriter {
       return 0;
     });
 
-    // Index list
+    // INDEX LIST
     groupNames.map(groupName => {
       erdMarkdown += `- [${groupName}](#${groupName})\n`;
     });
     erdMarkdown += '\n';
 
-    // ERD and descriptions
+    // ERD & DESCRIBES
     groupNames.map(groupName => {
       erdMarkdown += `## ${groupName}\n`;
       const collection = erdCollection[groupName];
@@ -34,10 +40,10 @@ export namespace ErdMarkdownWriter {
 
       let descMarkdownContent: string = '';
       const writtenDescSet = new Set<string>();
-      collection.descriptions.forEach(table => {
+      collection.describes.forEach(table => {
         if (writtenDescSet.has(table.name)) return;
         writtenDescSet.add(table.name);
-        descMarkdownContent += writeTableDescription(table) + '\n';
+        descMarkdownContent += writeTableDescription(table, tableMap) + '\n';
       });
 
       erdMarkdown += erdMarkdownContent + `\n` + descMarkdownContent;
@@ -87,7 +93,10 @@ export namespace ErdMarkdownWriter {
     return `\`\`\`mermaid\nerDiagram\n` + schemaContent + relationContent + `\`\`\``;
   }
 
-  function writeTableDescription(table: ITable): string {
+  function writeTableDescription(
+    table: ITable,
+    tableMap: { [tableName: string]: ITable | undefined },
+  ): string {
     let markdownContent: string = '';
 
     markdownContent += `### ${table.name}\n`;
@@ -95,14 +104,29 @@ export namespace ErdMarkdownWriter {
     markdownContent += `**Columns**\n`;
     table.columns.forEach(column => {
       let columnStr = `- \`${column.name}\``;
+
       const descLines = column.description.split('\n');
+      const relatedTable = column.foreignKeyTargetTableName
+        ? tableMap[column.foreignKeyTargetTableName]
+        : undefined;
+      if (relatedTable) {
+        const primaryColumn = relatedTable.columns.find(column => column.primaryKey);
+        if (primaryColumn) {
+          descLines.push(
+            `Belonged ${relatedTable.name}'s [${primaryColumn.name}](#${relatedTable.name})`,
+          );
+        } else {
+          descLines.push(`Belonged [${relatedTable.name}](#${relatedTable.name})`);
+        }
+      }
       if (descLines.length === 1 && descLines[0].length > 0) {
         columnStr += `: ${descLines[0]}`;
       } else if (descLines.length > 1) {
-        descLines.map(descLine => {
+        descLines.forEach(descLine => {
           columnStr += `\n  > ${descLine}`;
         });
       }
+
       markdownContent += columnStr + '\n';
     });
 

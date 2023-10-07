@@ -57,6 +57,6 @@ export namespace TypeormMarkdownApplication {
     });
 
     // Write ERD document
-    ErdMarkdownWriter.write(erdCollection, config);
+    ErdMarkdownWriter.write(erdCollection, tables, config);
   }
 }
