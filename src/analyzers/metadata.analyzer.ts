@@ -171,7 +171,7 @@ export namespace MetadataAnalyzer {
     });
   }
 
-  export function isTypeFunction(r: RelationTypeInFunction): r is (types?: any) => Function {
+  function isTypeFunction(r: RelationTypeInFunction): r is (types?: any) => Function {
     return typeof r === 'function';
   }
 }
