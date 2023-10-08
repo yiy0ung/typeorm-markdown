@@ -1,5 +1,7 @@
 # TypeORM Markdown
 
+![typeorm_markdown_thumbnail](https://github.com/yiy0ung/typeorm-markdown/assets/38432821/1a01ce74-a0e4-4583-b5e9-07fdb8c30735)
+
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENCE)
 [![npm version](https://img.shields.io/npm/v/typeorm-markdown.svg)](https://www.npmjs.com/package/typeorm-markdown)
 [![Downloads](https://img.shields.io/npm/dm/typeorm-markdown.svg)](https://www.npmjs.com/package/typeorm-markdown)
