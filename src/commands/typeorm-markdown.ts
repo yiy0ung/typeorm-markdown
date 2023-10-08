@@ -36,12 +36,13 @@ async function main(options: ProgramOptions) {
 
 const DEFAULT_TITLE: string = 'ERD';
 
+console.log(`${pkg.name} version ${pkg.version}`);
 const program: commander.Command = new commander.Command();
 program
-  .version(pkg.version, '-v, --version', 'output the current version')
-  .requiredOption('-i, --input <input_regex>', '')
-  .option('-o, --output <dir_path>', '', './')
-  .option('-t, --title <title>', 'title for a generated erd', DEFAULT_TITLE)
+  .version(pkg.version, '-v, --version', 'Print the current version')
+  .requiredOption('-i, --input <input_regex>', 'Input entity files as a glob pattern')
+  .option('-o, --output <dir_path>', 'Directory path where the erd document will be output', './')
+  .option('-t, --title <title>', 'Title of the generated erd document', DEFAULT_TITLE)
   .option(
     '--project <project_path>',
     'Use --project to explicitly specify the path to a tsconfig.json',

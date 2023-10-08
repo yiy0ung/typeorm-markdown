@@ -1,9 +1,9 @@
 {
   "name": "typeorm-markdown",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "license": "MIT",
   "author": "Jinyoung Lee",
-  "description": "",
+  "description": "TypeORM Markdown documents generator including ERD diagrams and comment descriptions",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
@@ -34,13 +34,13 @@
     "ts-patch": "^3.0.2",
     "typescript-transform-paths": "^3.4.6"
   },
-  "homepage": "https://github.com",
+  "homepage": "https://github.com/yiy0ung/typeorm-markdown",
   "repository": {
     "type": "git",
-    "url": "https://github.com"
+    "url": "https://github.com/yiy0ung/typeorm-markdown"
   },
   "bugs": {
-    "url": "https://github.com"
+    "url": "https://github.com/yiy0ung/typeorm-markdown/issues"
   },
   "keywords": [
     "typeorm",
