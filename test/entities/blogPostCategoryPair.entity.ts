@@ -1,4 +1,4 @@
-import { Column, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { BlogPost } from './blogPost.entity';
 import { BlogCategory } from './blogCategory.entity';
 
@@ -7,6 +7,7 @@ import { BlogCategory } from './blogCategory.entity';
  *
  * @namespace Blog
  */
+@Entity()
 export class BlogPostCategoryPair {
   /** Primary Key  */
   @PrimaryColumn('uuid')

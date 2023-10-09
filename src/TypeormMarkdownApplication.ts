@@ -5,7 +5,7 @@ import { MetadataAnalyzer } from './analyzers/metadata.analyzer';
 import { ITable } from './structures/ITable';
 import { EntityAnalyzer } from './analyzers/entity.analyzer';
 import { IErdCollection } from './structures/IErdCollection';
-import { ErdMarkdownWriter } from './writers/erd-markdown.writer';
+import { MarkdownWriter } from './writers/markdown.writer';
 
 function registerTsNode(config: TypeormMarkdownApplication.IConfig) {
   if (!config.compilerOptions) {
@@ -56,7 +56,7 @@ export namespace TypeormMarkdownApplication {
       EntityAnalyzer.analyze(erdCollection, program, table);
     });
 
-    // Write ERD document
-    ErdMarkdownWriter.write(erdCollection, tables, config);
+    // Write ERD markdown document
+    MarkdownWriter.write(erdCollection, tables, config);
   }
 }

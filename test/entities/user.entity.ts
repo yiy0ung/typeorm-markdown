@@ -11,6 +11,7 @@ import {
 import { BlogPost } from './blogPost.entity';
 import { BlogPostChat } from './blogPostChat.entity';
 import { Blog } from './blog.entity';
+import { BlogPostHit } from './blogPostHit.entity';
 
 /**
  * 사용자.
@@ -60,4 +61,7 @@ export class User {
 
   @OneToMany(() => BlogPostChat, postChat => postChat.author)
   postChats!: BlogPostChat[];
+
+  @OneToMany(() => BlogPostHit, postHit => postHit.user)
+  postHits!: BlogPostHit[];
 }

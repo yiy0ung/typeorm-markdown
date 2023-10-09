@@ -27,7 +27,7 @@ export class BlogPostChat {
   author!: User;
 
   /** 댓글을 작성한 User ID */
-  @Column()
+  @Column({ type: 'varchar' })
   authorId!: User['id'];
 
   @ManyToOne(() => BlogPost, post => post.chats)
@@ -35,7 +35,7 @@ export class BlogPostChat {
   post!: BlogPost;
 
   /** 댓글이 속한 BlogPost ID */
-  @Column()
+  @Column({ type: 'varchar' })
   postId!: BlogPost['id'];
 
   /** 내용 */

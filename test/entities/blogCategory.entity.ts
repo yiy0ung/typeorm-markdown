@@ -10,7 +10,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Blog } from './blog.entity';
-import { BlogPostCategoryPair } from './blogPostCategoryPair';
+import { BlogPostCategoryPair } from './blogPostCategoryPair.entity';
 
 /**
  * 블로그 카테고리.

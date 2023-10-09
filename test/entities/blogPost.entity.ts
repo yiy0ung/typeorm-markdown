@@ -12,7 +12,8 @@ import {
 import { BlogPostChat } from './blogPostChat.entity';
 import { Blog } from './blog.entity';
 import { User } from './user.entity';
-import { BlogPostCategoryPair } from './blogPostCategoryPair';
+import { BlogPostCategoryPair } from './blogPostCategoryPair.entity';
+import { BlogPostHit } from './blogPostHit.entity';
 
 /**
  * 블로그 게시글.
@@ -30,7 +31,7 @@ export class BlogPost {
   author!: User;
 
   /** 게시글 작성자 User ID */
-  @Column()
+  @Column({ type: 'varchar' })
   authorId!: User['id'];
 
   @ManyToOne(() => Blog, blog => blog.posts)
@@ -38,11 +39,11 @@ export class BlogPost {
   blog!: Blog;
 
   /** 게시글이 속한 Blog ID */
-  @Column()
+  @Column({ type: 'varchar' })
   blogId!: Blog['id'];
 
   /** 제목 */
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   title!: string | null;
 
   /** 내용 */
@@ -70,4 +71,7 @@ export class BlogPost {
 
   @OneToMany(() => BlogPostChat, chat => chat.post)
   chats!: BlogPostChat[];
+
+  @OneToMany(() => BlogPostHit, hit => hit.post)
+  hits!: BlogPostHit[];
 }

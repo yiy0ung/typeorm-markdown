@@ -4,6 +4,7 @@ import { RelationTypeInFunction } from 'typeorm/metadata/types/RelationTypeInFun
 import { ITable } from '@src/structures/ITable';
 import { normalizeArray } from '@src/utils/method.utils';
 import { snakeCase } from '@src/utils/string.utils';
+import { ColumnMetadataArgs } from 'typeorm/metadata-args/ColumnMetadataArgs';
 
 interface IModule {
   [key: string]: any;
@@ -68,7 +69,6 @@ export namespace MetadataAnalyzer {
         description: '',
         columns: [],
         relations: [],
-        hidden: false,
       });
     });
 
@@ -125,24 +125,7 @@ export namespace MetadataAnalyzer {
 
       table.columns.push({
         name: columnMetadata.propertyName,
-        type: (() => {
-          if (typeof columnMetadata.options.type === 'string') {
-            return columnMetadata.options.type;
-          }
-          if (typeof columnMetadata.options.type === 'function') {
-            const primitive = new columnMetadata.options.type();
-            const columnType = typeof primitive.valueOf();
-            return columnType === 'object' ? 'unknown' : columnType;
-          }
-          if (
-            columnMetadata.mode === 'createDate' ||
-            columnMetadata.mode === 'updateDate' ||
-            columnMetadata.mode === 'deleteDate'
-          ) {
-            return 'timestamp';
-          }
-          return 'unknown';
-        })(),
+        type: generalizeColumnType(columnMetadata),
         primaryKey: columnMetadata.options.primary ?? false,
         foreignKey: !!relatedTable,
         foreignKeyTargetTableName: relatedTable?.name ?? null,
@@ -195,6 +178,28 @@ export namespace MetadataAnalyzer {
         });
       }
     });
+  }
+
+  function generalizeColumnType(columnMetadata: ColumnMetadataArgs): string {
+    const {
+      options: { type },
+      mode,
+    } = columnMetadata;
+    const unknownType = '_unknown_';
+
+    if (typeof type === 'string') {
+      return type;
+    }
+    if (typeof type === 'function') {
+      const primitive = new type();
+      const columnType = typeof primitive.valueOf();
+      return columnType === 'object' ? unknownType : columnType;
+    }
+    if (mode === 'createDate' || mode === 'updateDate' || mode === 'deleteDate') {
+      return 'timestamp';
+    }
+
+    return unknownType;
   }
 
   function isTypeFunction(r: RelationTypeInFunction): r is (types?: any) => Function {

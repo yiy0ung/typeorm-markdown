@@ -5,7 +5,7 @@ import { IErdCollection } from '@src/structures/IErdCollection';
 import { ITable } from '@src/structures/ITable';
 import { normalizeArray } from '@src/utils/method.utils';
 
-export namespace ErdMarkdownWriter {
+export namespace MarkdownWriter {
   const FILE_NAME: string = 'erd.md';
 
   export function write(
@@ -103,32 +103,40 @@ export namespace ErdMarkdownWriter {
     markdownContent += `${table.description}\n`;
     markdownContent += `**Columns**\n`;
     table.columns.forEach(column => {
-      let columnStr = `- \`${column.name}\``;
+      let columnDesc = `- \`${column.name}\``;
+      const descLines: string[] = column.description.split('\n');
+      if (descLines.length === 1 && descLines[0].length === 0) {
+        descLines.pop();
+      }
 
-      const descLines = column.description.split('\n');
+      // ADD RELATION COMMENT
       const relatedTable = column.foreignKeyTargetTableName
         ? tableMap[column.foreignKeyTargetTableName]
         : undefined;
       if (relatedTable) {
         const primaryColumn = relatedTable.columns.find(column => column.primaryKey);
+        if (descLines.length > 0) {
+          descLines.push('');
+        }
         if (primaryColumn) {
           descLines.push(
-            '',
             `Belonged ${relatedTable.name}'s [${relatedTable.name}.${primaryColumn.name}](#${relatedTable.name})`,
           );
         } else {
-          descLines.push('', `Belonged [${relatedTable.name}](#${relatedTable.name})`);
+          descLines.push(`Belonged [${relatedTable.name}](#${relatedTable.name})`);
         }
       }
-      if (descLines.length === 1 && descLines[0].length > 0) {
-        columnStr += `: ${descLines[0]}`;
+
+      // ADD COLUMN DESCRIPTION
+      if (descLines.length === 1) {
+        columnDesc += `: ${descLines[0]}`;
       } else if (descLines.length > 1) {
         descLines.forEach(descLine => {
-          columnStr += `\n  > ${descLine}`;
+          columnDesc += `\n  > ${descLine}`;
         });
       }
 
-      markdownContent += columnStr + '\n';
+      markdownContent += columnDesc + '\n';
     });
 
     return markdownContent;

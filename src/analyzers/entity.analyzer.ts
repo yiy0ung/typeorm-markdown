@@ -9,6 +9,8 @@ export namespace EntityAnalyzer {
   const DESCRIBE_TAG: string = 'describe';
   const HIDDEN_TAG: string = 'hidden';
 
+  const DEFAULT_NAMESPACE = 'Default';
+
   export function analyze(erdCollection: IErdCollection, program: ts.Program, table: ITable): void {
     const sourceFile = program.getSourceFile(table.file);
     if (!sourceFile) return;
@@ -42,6 +44,21 @@ export namespace EntityAnalyzer {
 
         table.description += commentAndJSDoc.comment;
 
+        // IGNORE TABLE
+        if (commentAndJSDoc.jsdoc.some(jsdoc => jsdoc.tag === HIDDEN_TAG)) return;
+
+        // COLLECT DEFAULT NAMESPACE
+        if (commentAndJSDoc.jsdoc.every(jsdoc => jsdoc.tag !== NAMESPACE_TAG)) {
+          if (!erdCollection[DEFAULT_NAMESPACE]) {
+            erdCollection[DEFAULT_NAMESPACE] = {
+              erds: [],
+              describes: [],
+            };
+          }
+          erdCollection[DEFAULT_NAMESPACE].erds.push(table);
+          erdCollection[DEFAULT_NAMESPACE].describes.push(table);
+        }
+
         commentAndJSDoc.jsdoc.forEach(jsdoc => {
           if (!erdCollection[jsdoc.name]) {
             erdCollection[jsdoc.name] = {
@@ -58,8 +75,6 @@ export namespace EntityAnalyzer {
             collection.erds.push(table);
           } else if (jsdoc.tag === DESCRIBE_TAG) {
             collection.describes.push(table);
-          } else if (jsdoc.tag === HIDDEN_TAG) {
-            table.hidden = true;
           }
         });
       });

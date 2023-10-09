@@ -16,8 +16,6 @@ export interface ITable {
   columns: ITable.IColumn[];
 
   relations: ITable.IRelation[];
-
-  hidden: boolean;
 }
 
 export namespace ITable {
