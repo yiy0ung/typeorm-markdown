@@ -1,6 +1,7 @@
 # Community
 
 - [Blog](#Blog)
+- [Default](#Default)
 - [User](#User)
 
 ## Blog
@@ -8,12 +9,17 @@
 erDiagram
 blog_post_chat {
   uuid id PK 
-  unknown authorId FK 
-  unknown postId FK 
+  varchar authorId FK 
+  varchar postId FK 
   string body  
   timestamp createdAt  
   timestamp updatedAt  
   timestamp deletedAt  
+}
+blog_post_category_pair {
+  uuid id PK 
+  varchar postId FK 
+  varchar categoryId FK 
 }
 blog_category {
   uuid id PK 
@@ -30,9 +36,9 @@ blog {
 }
 blog_post {
   uuid id PK 
-  unknown authorId FK 
-  unknown blogId FK 
-  unknown title  "nullable"
+  varchar authorId FK 
+  varchar blogId FK 
+  varchar title  "nullable"
   string body  
   boolean isHidden  
   timestamp createdAt  
@@ -50,6 +56,8 @@ user {
 }
 blog_post_chat }|--|| user : author
 blog_post_chat }|--|| blog_post : post
+blog_post_category_pair }|--|| blog_post : post
+blog_post_category_pair }|--|| blog_category : category
 blog_category }|--|| blog : blog
 blog |o--|| user : owner
 blog_post }|--|| user : author
@@ -72,6 +80,14 @@ blog_post }|--|| blog : blog
 - `createdAt`: 작성일
 - `updatedAt`: 수정일
 - `deletedAt`: 삭제일
+
+### blog_post_category_pair
+BlogPost, BlogCategory N:M 테이블
+
+**Columns**
+- `id`: Primary Key
+- `postId`: Belonged blog_post's [blog_post.id](#blog_post)
+- `categoryId`: Belonged blog_category's [blog_category.id](#blog_category)
 
 ### blog_category
 블로그 카테고리.
@@ -120,6 +136,18 @@ blog_post }|--|| blog : blog
 - `createdAt`: 작성일
 - `updatedAt`: 수정일
 - `deletedAt`: 삭제일
+
+## Default
+```mermaid
+erDiagram
+empty_entity {
+  uuid id PK 
+}
+```
+### empty_entity
+Empty Entity.
+**Columns**
+- `id`
 
 ## User
 ```mermaid
