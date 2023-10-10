@@ -42,10 +42,10 @@ Options:
 
 ## Comment Tags
 
-- @namespace <name>: Both ERD and markdown content
-- @erd <name>: Only ERD
-- @describe <name>: Only markdown content, without ERD
-- @hidden: Neither ERD nor markdown content
+- `@namespace <name>`: Both ERD and markdown content
+- `@erd <name>`: Only ERD
+- `@describe <name>`: Only markdown content, without ERD
+- `@hidden`: Neither ERD nor markdown content
 
 ```typescript
 /**
