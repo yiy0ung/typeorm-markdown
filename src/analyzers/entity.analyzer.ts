@@ -1,17 +1,9 @@
 import ts from 'typescript';
-import { IErdCollection } from '@src/structures/IErdCollection';
 import { ITable } from '@src/structures/ITable';
 import { parseCommentAndJSDoc, parseCommentLine } from '@src/utils/string.utils';
 
 export namespace EntityAnalyzer {
-  const NAMESPACE_TAG: string = 'namespace';
-  const ERD_TAG: string = 'erd';
-  const DESCRIBE_TAG: string = 'describe';
-  const HIDDEN_TAG: string = 'hidden';
-
-  const DEFAULT_NAMESPACE = 'Default';
-
-  export function analyze(erdCollection: IErdCollection, program: ts.Program, table: ITable): void {
+  export function analyze(program: ts.Program, table: ITable): void {
     const sourceFile = program.getSourceFile(table.file);
     if (!sourceFile) return;
 
@@ -21,17 +13,12 @@ export namespace EntityAnalyzer {
         const name = node.name?.escapedText;
         if (name !== table.entityName) return;
 
-        analyzeEntity(erdCollection, sourceFile, node, table);
+        analyzeEntity(sourceFile, node, table);
       }
     });
   }
 
-  function analyzeEntity(
-    erdCollection: IErdCollection,
-    sourceFile: ts.SourceFile,
-    classNode: ts.ClassDeclaration,
-    table: ITable,
-  ) {
+  function analyzeEntity(sourceFile: ts.SourceFile, classNode: ts.ClassDeclaration, table: ITable) {
     // PARSE COMMENTS AND JSDOC
     const sourceFileText = sourceFile.getFullText();
     const commentRanges = ts.getLeadingCommentRanges(sourceFileText, classNode.pos);
@@ -43,40 +30,7 @@ export namespace EntityAnalyzer {
         if (!commentAndJSDoc) return;
 
         table.description += commentAndJSDoc.comment;
-
-        // IGNORE TABLE
-        if (commentAndJSDoc.jsdoc.some(jsdoc => jsdoc.tag === HIDDEN_TAG)) return;
-
-        // COLLECT DEFAULT NAMESPACE
-        if (commentAndJSDoc.jsdoc.every(jsdoc => jsdoc.tag !== NAMESPACE_TAG)) {
-          if (!erdCollection[DEFAULT_NAMESPACE]) {
-            erdCollection[DEFAULT_NAMESPACE] = {
-              erds: [],
-              describes: [],
-            };
-          }
-          erdCollection[DEFAULT_NAMESPACE].erds.push(table);
-          erdCollection[DEFAULT_NAMESPACE].describes.push(table);
-        }
-
-        commentAndJSDoc.jsdoc.forEach(jsdoc => {
-          if (!erdCollection[jsdoc.name]) {
-            erdCollection[jsdoc.name] = {
-              erds: [],
-              describes: [],
-            };
-          }
-
-          const collection = erdCollection[jsdoc.name];
-          if (jsdoc.tag === NAMESPACE_TAG) {
-            collection.erds.push(table);
-            collection.describes.push(table);
-          } else if (jsdoc.tag === ERD_TAG) {
-            collection.erds.push(table);
-          } else if (jsdoc.tag === DESCRIBE_TAG) {
-            collection.describes.push(table);
-          }
-        });
+        table.jsdocArgs.push(...commentAndJSDoc.jsdoc);
       });
     }
 

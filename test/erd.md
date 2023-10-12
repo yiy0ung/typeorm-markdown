@@ -146,6 +146,7 @@ empty_entity {
 ```
 ### empty_entity
 Empty Entity.
+
 **Columns**
 - `id`
 

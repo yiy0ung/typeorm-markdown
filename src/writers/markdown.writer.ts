@@ -1,55 +1,54 @@
 import fs from 'fs';
 import path from 'path';
 import { TypeormMarkdownApplication } from '@src/TypeormMarkdownApplication';
-import { IErdCollection } from '@src/structures/IErdCollection';
 import { ITable } from '@src/structures/ITable';
 import { normalizeArray } from '@src/utils/method.utils';
+import { SectionCollector } from './internal/sectionCollector';
+import { ISectionCollection } from '@src/structures/ISectionCollection';
 
 export namespace MarkdownWriter {
   const FILE_NAME: string = 'erd.md';
 
-  export function write(
-    erdCollection: IErdCollection,
-    tables: ITable[],
-    config: TypeormMarkdownApplication.IConfig,
-  ) {
-    let erdMarkdown: string = '';
+  export function write(tables: ITable[], config: TypeormMarkdownApplication.IConfig) {
+    let markdown: string = '';
+
+    const collection: ISectionCollection = SectionCollector.collect(tables);
     const tableMap = normalizeArray(tables, table => table.name);
 
     // TITLE
-    erdMarkdown += `# ${config.title}\n\n`;
+    markdown += `# ${config.title}\n\n`;
 
-    const groupNames = Object.keys(erdCollection).sort((a, b) => {
+    const sectionNames = Object.keys(collection).sort((a, b) => {
       if (a < b) return -1;
       if (a > b) return 1;
       return 0;
     });
 
     // INDEX LIST
-    groupNames.map(groupName => {
-      erdMarkdown += `- [${groupName}](#${groupName})\n`;
+    sectionNames.map(sectionName => {
+      markdown += `- [${sectionName}](#${sectionName})\n`;
     });
-    erdMarkdown += '\n';
+    markdown += '\n';
 
     // ERD & DESCRIBES
-    groupNames.map(groupName => {
-      erdMarkdown += `## ${groupName}\n`;
-      const collection = erdCollection[groupName];
+    sectionNames.map(sectionName => {
+      markdown += `## ${sectionName}\n`;
+      const section = collection[sectionName];
 
-      const erdMarkdownContent = writeERDiagram(collection.erds);
+      const erdMarkdownContent = writeERDiagram(section.erds);
 
       let descMarkdownContent: string = '';
       const writtenDescSet = new Set<string>();
-      collection.describes.forEach(table => {
+      section.describes.forEach(table => {
         if (writtenDescSet.has(table.name)) return;
         writtenDescSet.add(table.name);
         descMarkdownContent += writeTableDescription(table, tableMap) + '\n';
       });
 
-      erdMarkdown += erdMarkdownContent + `\n` + descMarkdownContent;
+      markdown += erdMarkdownContent + `\n` + descMarkdownContent;
     });
 
-    fs.writeFileSync(path.join(config.output, FILE_NAME), erdMarkdown);
+    fs.writeFileSync(path.join(config.output, FILE_NAME), markdown);
   }
 
   function writeERDiagram(tables: ITable[]): string {

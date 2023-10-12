@@ -1,6 +1,6 @@
 import { ITable } from './ITable';
 
-export interface IErdCollection {
+export interface ISectionCollection {
   [namespace: string]: {
     erds: ITable[];
     describes: ITable[];

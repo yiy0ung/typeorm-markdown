@@ -4,7 +4,7 @@ import ts from 'typescript';
 import { MetadataAnalyzer } from './analyzers/metadata.analyzer';
 import { ITable } from './structures/ITable';
 import { EntityAnalyzer } from './analyzers/entity.analyzer';
-import { IErdCollection } from './structures/IErdCollection';
+import { ISectionCollection } from './structures/ISectionCollection';
 import { MarkdownWriter } from './writers/markdown.writer';
 
 function registerTsNode(config: TypeormMarkdownApplication.IConfig) {
@@ -50,13 +50,12 @@ export namespace TypeormMarkdownApplication {
     });
     program.getTypeChecker();
 
-    // Parse ORM comment and collect erd
-    const erdCollection: IErdCollection = {};
+    // Parse ORM comment
     tables.forEach(table => {
-      EntityAnalyzer.analyze(erdCollection, program, table);
+      EntityAnalyzer.analyze(program, table);
     });
 
     // Write ERD markdown document
-    MarkdownWriter.write(erdCollection, tables, config);
+    MarkdownWriter.write(tables, config);
   }
 }

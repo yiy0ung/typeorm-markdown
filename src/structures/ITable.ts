@@ -1,5 +1,11 @@
 import { RelationType } from 'typeorm/metadata/types/RelationTypes';
 
+export interface IJSDoc {
+  tag: string;
+
+  name: string;
+}
+
 export interface ITable {
   file: string;
 
@@ -12,6 +18,8 @@ export interface ITable {
   database: string | null;
 
   description: string;
+
+  jsdocArgs: IJSDoc[];
 
   columns: ITable.IColumn[];
 

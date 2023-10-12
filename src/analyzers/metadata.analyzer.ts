@@ -67,6 +67,7 @@ export namespace MetadataAnalyzer {
         entityName,
         database: tableMetadata.database ?? null,
         description: '',
+        jsdocArgs: [],
         columns: [],
         relations: [],
       });
