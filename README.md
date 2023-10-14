@@ -8,11 +8,9 @@
 
 TypeORM markdown documents generator.
 
-This package is inspired by [prisma-markdown](https://github.com/samchon/prisma-markdown), so it has similar usage.
-
 - Mermaid ERD diagrams
 - Descriptions by JSDoc
-- Separations by @namespace comments
+- Separations by `@namespace` comments
 
 If you want to see how markdown document being generated, visit below examples:
 
@@ -28,7 +26,7 @@ npm i -D typeorm-markdown
 ### Command Line Interface
 
 ```
-typeorm-markdown version 0.1.0
+typeorm-markdown version 1.0.0
 Usage: typeorm-markdown [options]
 
 Options:
@@ -37,12 +35,16 @@ Options:
   -o, --output <dir_path>    Directory path where the erd document will be output (default: "./")
   -t, --title <title>        Title of the generated erd document (default: "ERD")
   --project <project_path>   Use --project to explicitly specify the path to a tsconfig.json (default: "tsconfig.json")
-  -h, --help                 display help for command               display help for command
+  -h, --help                 display help for command
 ```
 
 ## Comment Tags
 
-- `@namespace <name>`: Both ERD and markdown content
+This package is inspired by [prisma-markdown](https://github.com/samchon/prisma-markdown), so it has similar usage.
+
+- `@namespace <name>`
+  - Both ERD and markdown content
+  - If `@namespace` is not set, it will be classified into the `Default` namespace.
 - `@erd <name>`: Only ERD
 - `@describe <name>`: Only markdown content, without ERD
 - `@hidden`: Neither ERD nor markdown content
@@ -67,7 +69,7 @@ class User {}
 class UserProfile {}
 
 /**
- * Only description on Blog chapter.
+ * Only erd on Blog chapter.
  *
  * @erd Blog
  */

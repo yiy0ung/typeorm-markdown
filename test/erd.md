@@ -1,8 +1,8 @@
-# Community
+# My Blog
 
 - [Blog](#Blog)
-- [Default](#Default)
 - [User](#User)
+- [Default](#Default)
 
 ## Blog
 ```mermaid
@@ -137,19 +137,6 @@ BlogPost, BlogCategory N:M 테이블
 - `updatedAt`: 수정일
 - `deletedAt`: 삭제일
 
-## Default
-```mermaid
-erDiagram
-empty_entity {
-  uuid id PK 
-}
-```
-### empty_entity
-Empty Entity.
-
-**Columns**
-- `id`
-
 ## User
 ```mermaid
 erDiagram
@@ -177,4 +164,17 @@ user {
   > 삭제일.
   > 
   > 삭제일이 있다는 것은 탈퇴를 의미한다.
+
+## Default
+```mermaid
+erDiagram
+empty_entity {
+  uuid id PK 
+}
+```
+### empty_entity
+Empty Entity.
+
+**Columns**
+- `id`
 

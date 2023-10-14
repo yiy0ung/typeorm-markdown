@@ -2,7 +2,7 @@ import { ISectionCollection } from '@src/structures/ISectionCollection';
 import { ITable } from '@src/structures/ITable';
 
 export namespace SectionCollector {
-  const DEFAULT_NAMESPACE = 'Default';
+  export const DEFAULT_NAMESPACE = 'Default';
 
   const NAMESPACE_TAG: string = 'namespace';
   const ERD_TAG: string = 'erd';

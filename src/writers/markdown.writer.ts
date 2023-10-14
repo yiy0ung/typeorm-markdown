@@ -18,11 +18,7 @@ export namespace MarkdownWriter {
     // TITLE
     markdown += `# ${config.title}\n\n`;
 
-    const sectionNames = Object.keys(collection).sort((a, b) => {
-      if (a < b) return -1;
-      if (a > b) return 1;
-      return 0;
-    });
+    const sectionNames = getOrderedSectionNames(collection);
 
     // INDEX LIST
     sectionNames.map(sectionName => {
@@ -49,6 +45,22 @@ export namespace MarkdownWriter {
     });
 
     fs.writeFileSync(path.join(config.output, FILE_NAME), markdown);
+  }
+
+  function getOrderedSectionNames(collection: ISectionCollection) {
+    const sectionNames = Object.keys(collection).sort((a, b) => {
+      if (a < b) return -1;
+      if (a > b) return 1;
+      return 0;
+    });
+
+    const defaultSectionIndex = sectionNames.indexOf(SectionCollector.DEFAULT_NAMESPACE);
+    if (defaultSectionIndex !== -1) {
+      sectionNames.splice(defaultSectionIndex, 1);
+      sectionNames.push(SectionCollector.DEFAULT_NAMESPACE);
+    }
+
+    return sectionNames;
   }
 
   function writeERDiagram(tables: ITable[]): string {
@@ -100,6 +112,8 @@ export namespace MarkdownWriter {
 
     markdownContent += `### ${table.name}\n`;
     markdownContent += `${table.description}\n`;
+    if (table.database) markdownContent += `- Database: ${table.database}\n`;
+
     markdownContent += `**Columns**\n`;
     table.columns.forEach(column => {
       let columnDesc = `- \`${column.name}\``;

@@ -1,6 +1,6 @@
 {
   "name": "typeorm-markdown",
-  "version": "0.1.5",
+  "version": "1.0.0",
   "license": "MIT",
   "author": "Jinyoung Lee",
   "description": "TypeORM Markdown documents generator including ERD diagrams and comment descriptions",
@@ -9,7 +9,8 @@
   "scripts": {
     "prepare": "ts-patch install -s",
     "build": "rimraf dist && tspc",
-    "test": "node ./dist/src/commands/typeorm-markdown.js --title \"Community\" -i \"test/**/*.entity.ts\" -o \"test/\" --project \"test/tsconfig.json\""
+    "deploy": "npm run build && npm run test && npm publish",
+    "test": "node ./dist/src/commands/typeorm-markdown.js --title \"My Blog\" -i \"test/**/*.entity.ts\" -o \"test/\" --project \"test/tsconfig.json\""
   },
   "bin": {
     "typeorm-markdown": "./dist/src/commands/typeorm-markdown.js"
