@@ -112,9 +112,9 @@ export namespace MarkdownWriter {
 
     markdownContent += `### ${table.name}\n`;
     markdownContent += `${table.description}\n`;
-    if (table.database) markdownContent += `- Database: ${table.database}\n`;
+    if (table.database) markdownContent += `\n- Database: ${table.database}\n`;
 
-    markdownContent += `**Columns**\n`;
+    markdownContent += `**Columns**\n\n`;
     table.columns.forEach(column => {
       let columnDesc = `- \`${column.name}\``;
       const descLines: string[] = column.description.split('\n');

@@ -67,6 +67,7 @@ blog_post }|--|| blog : blog
 블로그 게시글 댓글.
 
 **Columns**
+
 - `id`: Primary Key
 - `authorId`
   > 댓글을 작성한 User ID
@@ -85,6 +86,7 @@ blog_post }|--|| blog : blog
 BlogPost, BlogCategory N:M 테이블
 
 **Columns**
+
 - `id`: Primary Key
 - `postId`: Belonged blog_post's [blog_post.id](#blog_post)
 - `categoryId`: Belonged blog_category's [blog_category.id](#blog_category)
@@ -93,6 +95,7 @@ BlogPost, BlogCategory N:M 테이블
 블로그 카테고리.
 
 **Columns**
+
 - `id`: Primary Key
 - `blogId`
   > 카테고리가 속한 Blog ID
@@ -110,6 +113,7 @@ BlogPost, BlogCategory N:M 테이블
 사용자가 작성한 게시글을 모아서 보여준다.
 
 **Columns**
+
 - `id`: Primary Key
 - `ownerId`
   > 블로그 관리자 User ID
@@ -121,6 +125,7 @@ BlogPost, BlogCategory N:M 테이블
 블로그 게시글.
 
 **Columns**
+
 - `id`: Primary Key
 - `authorId`
   > 게시글 작성자 User ID
@@ -154,6 +159,7 @@ user {
 사용자.
 
 **Columns**
+
 - `id`: Primary Key
 - `account`: 계정 ID
 - `password`: 비밀번호
@@ -176,5 +182,6 @@ empty_entity {
 Empty Entity.
 
 **Columns**
+
 - `id`
 

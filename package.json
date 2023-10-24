@@ -1,6 +1,6 @@
 {
   "name": "typeorm-markdown",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "author": "Jinyoung Lee",
   "description": "TypeORM Markdown documents generator including ERD diagrams and comment descriptions",
